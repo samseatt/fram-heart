@@ -9,22 +9,599 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+MEMO
+----
+DATA ANALYSIS:
+It is important that the data be available at prediction time as well (glucose... )
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Shows alternate wyas to visualize the data, its shape, its correlation (contribution) of the dependent variables (inputs) to the dependent variable (output), and any confounding/correlations of the inputs to each other (i.e., understand and account for where two or more inputs are not fully independent to each other), to get towards the goal of understanding the most relevant inputs.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+# Excecutive Summary
 
-```{r cars}
-summary(cars)
+## About the Project:
+I have selected a heart disease dataset to do my modelling. The goal of this modeling exercise is to be able to obtain better healthcare outcomes when it comes to predicting heart disease and designing appropriate and suitable treatment plan for patients being screened/tested. Two additonal proposed benefits of understanding the predictors and their impact on the progression of this disease; and possibly to model heart disease more comprehensively with elements of precision and stratified medicine in mind (e.g. incorporating genomic data and IoT/Fitbit-like health metrics that will get ubiquitously sequenced/collected).
+
+Of course a more informally obvious reason is to demonstrate and consolidate my learning of data science, especially of machine learning. In this last vein I will demonstrate some ideas and slightly alter the flow of the document to over explain some of my under-the-hood reasoning that will often be omitted in the more formal and more final research writups.
+
+The project is located
+Readme
+model.R
+Two datasets
+ - 
+ - 
+ 
+The goals of my models is binary classification. Before selecting and training my final model and making it ready for prediction, I will first critically analyze the data including ... ->
+
+I will test several methods. This will not only allow me to understand and apply various classification models we studied, but will also provide a better understanding to the relative benefits and deficiencies of each model in this use case, and, as well, to determine what model(s) should best be used for further training and prediction in real life.
+
+... data analysis to understand its relevance and statistical significande
+
+Test multiple models to understand their relative merits and pick the best model for this problem, both in terms of computing performance (run time etc. for the anticipated data sizes during training and prediction-time latency considerations) and functional performance (specificity, accuracy etc.).
+
+I also try two separate data sets () to (a) check the algorithms and have more confidence in them, and (b) to demonstrate the importance of having the right data for the right problem, in this case the best inputs i.e. inputs that are better correlated with the onset of the disease and that have sufficient variability to drive traiining.
+
+
+## Running your code
+The process is detailed in the Readme file (located at). However, I briefly outline these steps below:
+
+source("code/model.R", echo = TRUE)
+
+
+This data is
+
+Motivation for chosing this dataset:
+An important aspect of data exploration, in addition to understanding what the data is and what its statistical inverence is, is to understand why we picked it and for what benefit (compared to other options, if any).
+It is important for a machine learning project to start with a simpler problem to show a quick success and to test out your methods, algorighms and process. As data scientists the first step is understand the data, its efficacy, and efficacy of our models. Once we can select convincingly best models and prove a justifiable initial benefit, we are in a better position to secure funding/approvals for a bigger undertaking of the same product including better/directed data collection campaigns, data analysis time and expertise, and adequate computing resources.
+
+Data:
+The data is
+It consists of several fields or features. 17 of these have been chosen as relevant to this analysis. These will be considered the inputs for my models.
+
+It also is labelled, the outputs or the labels are represented by 0 or 1. Meaning the patient either had heart disease or not. 
+
+The labels are necessary for supervised learnig including binary classification (here). Similarly when our model is trained and deployed, it will look at the above measurement for the patient and then predict if the subject is likely to have heart disease or not. This can then provide useful direction to the doctors around treatment options and further health tests.
+
+
+... For further details of the data please refer to the Data Dictionary in the Appendix section.
+
+Project Goals:
+
+
+Guiding Principles:
+
+
+Key Steps Performed:
+
+Once data is collected, cleaned, analyzed/plotted, structured, and partitioned into training and validation sets, I develop several models (using R code). I train each models on the same training set and evaluate each by predicting on the same validation test. I then compare these models for a handful of performance/error metrics. I also evaluate the quality of data and the overall appoach to understand if this indeed has useful practial value and what are the limitations (of the data, methodology or efficacy of this approach) that can be improved (please refer to the conclusion section of this report for this).
+
+## Project Details
+
+Please refer to the attached file xx for running the code and analysis. The artifacts can also be found in the following BitBucket location along with a README file to provide a BitBucket-specific roadmap of the stored artifacts.
+
+
+## Data Preparation and Setup/Bootstrap Requirements
+
+Partitioned Data Sets:
+
+To keep it consistent with the class and presumably comparable with other student submission, I have used the data processing steps provided for this assignment and the model training and prediction tasks based on the knowledge from the previous (Machine Learning) class.
+
+
+Seed: A seed is appropriatedly used (and seed furnished in the code snippents) to facilitate some consistency between the results that are being furnished here, with the results obtained when the graders re-run these model development and analysis steps.
+
+
+
+
+
+## Methods and Analysis
+
+Process and techniques used: 
+  - data cleansing:
+  - data exploration:
+  - data visualization
+  - ingights gained
+  - modeling approach
+  
+Since this is a classification problem with binary outcomes, precision and specificity (and related complex metrics like F score) will be used for analyzing different models and their permutations. Specificity will be valued much higher because false negatives have high consequences: when an at-risk patient drops off from life-saving treatment options.
+  
+#########################################################
+# Prerequisites / preparation steps
+#########################################################
+# This file uses the Heart Disease UCI data set.
+
+# The goal of this R script file is to load the data, statistically analyze it, clean it,
+# plot or list it as necessary, split it into training and validation sets, save these data sets,
+# develop various classificaiton models, train each model on the same trainng set of this data,
+# run the predictions to evaluate the results using a handful of parameters, and make snippets
+# of these code available for analysis (in the RMD file) for final presentation of the data,
+# the methods, and the final results
+
+# This script (model.R) is also available in my RStudio project checked in GitHub ()
+
+
+# ??
+# In my data partition code I also save the data in an RData (rda) object: edx.rda
+# This way you don't have to load the data everytime you lose your edx R session/environment variable
+# You can subsequently load it using the following code (I have commented it your since you don't have
+# my RDA ojbect, however you can grab it from my github project).
+
+if(!require(tidyverse)) install.packages("tidyverse", repos = "http://cran.us.r-project.org")
+library(dplyr)
+library(ggplot2)
+if(!require(caret)) install.packages("caret", repos = "http://cran.us.r-project.org")
+library(readr)  # for read_csv
+library(knitr)  # for kable
+
+# ??
+#####################################################################################
+# Project Details
+#####################################################################################
+
+
+# My GitHub repository location:
+#   https://github.com/samseatt/fram-heart
+#   project name is also fram-heart
+
+#####################################################################################
+# First get the data from the Kaggle repository (indirectly via GitHub)
+#####################################################################################
+# Since it has proven difficult to download data in R directly from Kaggle, we will download it
+# from my GitHub repository where I have already committed the my data file that I manually downloaded
+# from Kaggle (Note: this data file can also be directly copied from my GitHub repository from
+# data/heart.csv in my project)
+
+#####################################################################################
+# Understanding and Analyzing the Data
+#####################################################################################
+ # For more details, please also refer to the RMD report for this project (cyo-project-report.Rmd)
+ 
+ # Understand data distribution of each field (this helps with understanding how valid the data is).
+ 
+ # >> Move this to Rmd
+ # The original data was collected and assmebled with 76 unique attributes or inputs. However, the
+ # curators of this data have already reduced them to the 14 most meaninfgful ones. This makes
+ # the dataset more tractable and more amenable to modelkng and training as the training algorithnms
+ # do not have to try to fit all those less correlated inputs.
+ 
+ # The output or label is the goal attribute. A zero means no heart disease whereas the values of
+ # 1-4 represent various chances of heart disease. Since I am only predicting the presence or
+ # absence of heart disease, I normalize all the non-zero values to 1 indicating prediction of current
+ # heart disease in the patient.
+ 
+class(heart)
+ 
+head(heart)
+# This displays the 13 inputs and 1 output.
+
+# We check and find that heart is not an ordinary numeric value of 0 or 1
+str(heart)
+
+# Since I am working on a classification problem, I need to change target to factors i.e.
+# as discrete labels representing diseased or not diseased (1 or 0), respectively and not
+# magnitudes of 0 and 1
+heart$target <- as.factor(heart$target)
+
+
+# The following code display the summary of each field, including the output (target)
+summary(heart)
+
+Initialize project and load data
+
+```{r init_project}
+if(!require(tidyverse)) install.packages("tidyverse", repos = "http://cran.us.r-project.org")
+library(dplyr)
+library(ggplot2)
+if(!require(caret)) install.packages("caret", repos = "http://cran.us.r-project.org")
+library(readr)  # for read_csv
+library(knitr)  # for kable
+
+myfile <- "https://raw.githubusercontent.com/samseatt/fram-heart/master/data/framingham.csv"
+fram_heart <- read_csv(myfile)
+heart <- fram_heart
+
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
+## Data exploration
+# Exploring data relationships
+Check correlations beteen inputs (independenat variables that ideally should not be correlated in order to get the maximum benfit of each) and beteen imputs and output (the dependant variable, where correlation should exist), check p values (to show statistical significance) add correlations, add 
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r data_exploration}
+if(!require(huxtable)) install.packages("huxtable", repos = "http://cran.us.r-project.org")
+library(huxtable)
+if(!require(magrittr)) install.packages("magrittr", repos = "http://cran.us.r-project.org")
+library(magrittr)
+
+# head_heart <- heart[1:5, 1:8]
+# 
+# heart_hux <- 
+#   hux(head_heart) %>% 
+#   add_colnames() %>% 
+#   set_bold(row = 1, col = everywhere, value = TRUE) %>% 
+#   set_all_borders(TRUE)
+# print_screen(heart_hux)
+# 
+# head_heart <- heart[1:5, 9:16]
+# 
+# heart_hux <- 
+#   hux(head_heart) %>% 
+#   add_colnames() %>% 
+#   set_bold(row = 1, col = everywhere, value = TRUE) %>% 
+#   set_all_borders(TRUE)
+# print_screen(heart_hux)
+
+head(heart[, 1:8])
+head(heart[, 9:16])
+
+
+str(heart)
+summary(heart)
+
+ggplot(data = heart) + geom_point(aes(age, sysBP))
+cor(heart$age, heart$sysBP)
+ggplot(data = heart) + geom_point(aes(age, cigsPerDay))
+cor(heart$age, heart$cigsPerDay)
+ggplot(data = heart) + geom_point(aes(age, totChol))
+ggplot(data = heart) + geom_point(aes(sysBP, diaBP))
+cor(heart$sysBP, heart$diaBP)
+# The two blood pressures seem somewhat correlaged
+
+
+ggplot(data = fram_heart) + geom_boxplot(aes(as.factor(TenYearCHD), age), outlier.colour = "red", outlier.shape = 1, na.rm = TRUE) +
+  labs(title = "Relative variability of Age", x = "Ten Year CHD", y = "Age")
+ggplot(data = fram_heart) + geom_boxplot(aes(as.factor(TenYearCHD), totChol), outlier.colour = "red", outlier.shape = 1, na.rm = TRUE) +
+  labs(title = "Relative variability of Total Cholesterol", x = "Ten Year CHD", y = "Total Cholesterol")
+ggplot(data = fram_heart) + geom_boxplot(aes(as.factor(TenYearCHD), cigsPerDay), outlier.colour = "red", outlier.shape = 1, na.rm = TRUE) +
+  labs(title = "Relative variability of Cigarettes Per Day", x = "Ten Year CHD", y = "Cigarettes Per Day")
+# Average is close to zero cigarettes for health vs. higher for smokers
+
+ggplot(data = fram_heart) + geom_boxplot(aes(as.factor(TenYearCHD), sysBP), outlier.colour = "red", outlier.shape = 1, na.rm = TRUE) +
+  labs(title = "Relative variability of Systolic BP", x = "Ten Year CHD", y = "Systolic BP")
+ggplot(data = fram_heart) + geom_boxplot(aes(as.factor(TenYearCHD), diaBP), outlier.colour = "red", outlier.shape = 1, na.rm = TRUE) +
+  labs(title = "Relative variability of Diastolic BP", x = "Ten Year CHD", y = "Diastolic BP")
+ggplot(data = fram_heart) + geom_boxplot(aes(as.factor(TenYearCHD), BMI), outlier.colour = "red", outlier.shape = 1, na.rm = TRUE) +
+  labs(title = "Relative variability of Body Mass Index", x = "Ten Year CHD", y = "BMI")
+
+# Heart Rate does not seem to be a good indicator
+ggplot(data = fram_heart) + geom_boxplot(aes(as.factor(TenYearCHD), glucose), outlier.colour = "red", outlier.shape = 1, na.rm = TRUE) +
+  labs(title = "Relative variability of Glucose Level", x = "Ten Year CHD", y = "Blood Glucose")
+
+# This tells me that I have read the CSV file as a dataframe as expected. There are 16 columns.
+# 15 of these columns are various parameters or measurements form each patient, and one column:
+# TenYearCHD (whether or not the patient developed Coronary Heart Disease within 10 years after
+# the study i.e. ten years after taking the measurement) is the output or the label i.e. what
+# my models need to match in training and predict
+#.
+# These details of the data are furhter summarized in the final report (RMD/PDF file).
+# 
+# It also tells me that all the columns are numeric - which is what's required for inputs of a
+# machine learning model.
+#
+# Furthermore, the inputs have more or less within two orders of magnitude (between single digit to hundreds)
+# so normalization of the data may not be necessary. Although some values are binary, but they
+# are represented by 0 or 1 which may be a little smaller compared to total cholesterol (toChol)
+# numbers that go into 300s. We can check the range of these to see if it will help to subtract
+# the mean or the lowest value form each toChol reading. The same can be considered for sysBP, diaBP,
+# BMI, heartRate and glucose.
+#
+# In my data wrangling exercise I do see several NA values (645 in total). I would need to remove these as part of
+# data cleaning
+nrow(heart)
+sum(is.na.data.frame(heart))
+# WIth 388 in glucose
+colSums(is.na.data.frame(heart))
+
+# This will be a significant (but not overwhelming) loss of 9.2% of the data. So let's first see how
+# useful glucose level is in predicting heart disease.
+
+summary(heart)
+# This gives us the ranges and means of each parameter (and the output). In the case of total cholesterol,
+# for example I can subract the mean from each value and then divide each value by 10 to get the
+# data closer to 1. This can be helpful in keeping the relative influence of each input relatively
+# similar. But at this stage I will train on these outputs as is. Once I have picked the best performing
+# model, I can then re-train it with normalized values and see how much difference normalization makes.
+# Doing it this way will demonstrate how much (if, at all) useful this is.
+heart %>%
+  ggplot(aes(glucose, fill = TenYearCHD)) + 
+  geom_histogram(binwidth = 20, color = "black") +
+  scale_x_continuous() + 
+  facet_grid(male ~ TenYearCHD, labeller = labeller(male = label_both, TenYearCHD = label_both)) +
+  geom_vline(xintercept = median(heart$glucose, na.rm=TRUE), color = "red")
+heart %>% group_by(male, TenYearCHD) %>% summarise(n = n())
+
+# Well, it seems fairly even key for both healthy and diseased outcomes, but healthy subjects slightly
+# favor towards lower glucose levels (bigger red bars on the left side, for both genders)
+# So I decide to keep the column and drop more rows. I will still have sufficient data to train and
+# evaluate the models.
+
+# I decide to save the row and simply drop the glucose columns
+# Another secondary reason for removing this columns with high NA is tht it will not 
+# but in real life, this would be a good time to ask the subject matter experts to see why the blood glucose
+# information is not readily available in patient data (a reason would be that it is considered more related
+# to diabetes or diabetes mediate heart disease, and may not be always ordered in the blood test. So it is
+# not likely that much tied to heart disease even from the point of view of the medical professionals)
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r data_cleaning}
+##################################################################################################
+# Data cleaning and sanitization
+#
+# I do it before I partition the data into training and test data sets, so I don't have to
+# do it twice on each set
+##################################################################################################
+# First save the the alternate version to compare later if input selection produced any benefit (or if it
+# things worse)
+heart_with_glucose <- na.omit(heart)
+
+# Remove glucose column
+heart$glucose <- NULL
+
+# I also drop education as it is medically non-relevant (though it could potentially be indirectly correlated to
+# nutritional habits). I it appears that this field has the potential of introducing training and social bias
+# in the ML models (as they will be later used for treatment options during the prediction phase).
+# Also, below visualization helps us infer that this variable trends the same for both healthy and at-risk subjects.
+heart %>%
+  ggplot(aes(education, fill = TenYearCHD)) + 
+  geom_histogram(binwidth = 1, color = "black") +
+  scale_x_continuous() + 
+  facet_grid(male ~ TenYearCHD, labeller = labeller(male = label_both, TenYearCHD = label_both)) +
+  geom_vline(xintercept = median(heart$education), color = "red")
+
+heart$education <- NULL
+
+# Dropping all rows with one or more NA columns
+heart <- na.omit(heart)
+nrow(heart)
+# Now I have 3658 rows to train and validate. Seems like just about right to get a good representative
+# training in reasonable time, allowing to run the models relatively quickly and comparing multipe models
+# (With a very large dataset, even though I can train better, albeit risking overtraiing if I'm not
+# careful, it will take a long time to crunch throught the traiing, therefore limiting me from trying
+# and comparing several model).
+
+# Rename output column to y
+names(heart)[names(heart) == 'TenYearCHD'] <- 'y'
+
+# Since I am working on a classification problem, I need to change target to factors i.e.
+# as discrete labels representing diseased or not diseased (1 or 0), respectively and not
+# magnitudes of 0 and 1
+heart$y <- as.factor(heart$y)
+
+# Let's see if we have sufficient positive preditions. 
+sum(as.numeric(as.character(heart$y)))
+# I see 557 positive outcomes to work with, and that should be sufficient
+
+# So in summary, this data should work quite well for my project.
+```
+
+# Functional analysis and further data exploration
+
+```{r data_exp}
+##################################################################################################
+# Functional analysis and further data exploration
+##################################################################################################
+hist(heart$age)
+hist(heart$totChol)
+
+ggplot(gather(fram_heart, cols, value), aes(x = value)) + 
+  geom_histogram(binwidth = 20) + facet_grid(.~cols)
+
+# See the distribution of totChol between diseased and healthy patinets, furhter divided by sex
+heart %>% group_by(male, y) %>% summarise(n = n())
+
+## TODO Show p values
+
+
+# Plot the histogram by age (segregated into male/female as well as healthy/at-risk groups)
+heart %>%
+  ggplot(aes(age, fill = y)) + 
+  geom_histogram(binwidth = 5, color = "black") +
+  scale_x_continuous() + 
+  facet_grid(male ~ y, labeller = labeller(male = label_both, y = label_both)) +
+  geom_vline(xintercept = median(heart$age), color = "red")
+
+# Exploratory modelling through training reared the fact that most of these variables are not
+# effecting the model i.e. not variable enough for training purpose. For this rason I want to also
+# normalize them and center them around zero to have the maximum effect of their limited variabliligy.
+
+# Normalize age
+summary(heart$age)
+# heart$age <- (heart$age - mean(heart$age)) / mean(heart$age)
+
+
+heart %>%
+  ggplot(aes(currentSmoker, fill = y)) + 
+  geom_histogram(binwidth = 1, color = "black") +
+  scale_x_continuous() + 
+  facet_grid(male ~ y, labeller = labeller(male = label_both, y = label_both)) +
+  geom_vline(xintercept = median(heart$currentSmoker), color = "red")
+
+heart %>%
+  ggplot(aes(cigsPerDay, fill = y)) + 
+  geom_histogram(binwidth = 5, color = "black") +
+  scale_x_continuous() + 
+  facet_grid(male ~ y, labeller = labeller(male = label_both, y = label_both)) +
+  geom_vline(xintercept = median(heart$cigsPerDay), color = "red")
+
+heart %>%
+  ggplot(aes(BPMeds, fill = y)) + 
+  geom_histogram(binwidth = 1, color = "black") +
+  scale_x_continuous() + 
+  facet_grid(male ~ y, labeller = labeller(male = label_both, y = label_both)) +
+  geom_vline(xintercept = median(heart$BPMeds), color = "red")
+
+heart %>%
+  ggplot(aes(prevalentStroke, fill = y)) + 
+  geom_histogram(binwidth = 1, color = "black") +
+  scale_x_continuous() + 
+  facet_grid(male ~ y, labeller = labeller(male = label_both, y = label_both)) +
+  geom_vline(xintercept = median(heart$prevalentStroke), color = "red")
+
+heart %>%
+  ggplot(aes(prevalentHyp, fill = y)) + 
+  geom_histogram(binwidth = 1, color = "black") +
+  scale_x_continuous() + 
+  facet_grid(male ~ y, labeller = labeller(male = label_both, y = label_both)) +
+  geom_vline(xintercept = median(heart$prevalentHyp), color = "red")
+
+heart %>%
+  ggplot(aes(diabetes, fill = y)) + 
+  geom_histogram(binwidth = 1, color = "black") +
+  scale_x_continuous() + 
+  facet_grid(male ~ y, labeller = labeller(male = label_both, y = label_both)) +
+  geom_vline(xintercept = median(heart$diabetes), color = "red")
+
+heart %>%
+  ggplot(aes(totChol, fill = y)) + 
+  geom_histogram(binwidth = 20, color = "black") +
+  scale_x_continuous() + 
+  facet_grid(male ~ y, labeller = labeller(male = label_both, y = label_both)) +
+  geom_vline(xintercept = median(heart$totChol), color = "red")
+summary(heart$totChol)
+# heart$totChol <- (heart$totChol - mean(heart$totChol)) / mean(heart$totChol)
+
+heart %>%
+  ggplot(aes(sysBP, fill = y)) + 
+  geom_histogram(binwidth = 20, color = "black") +
+  scale_x_continuous() + 
+  facet_grid(male ~ y, labeller = labeller(male = label_both, y = label_both)) +
+  geom_vline(xintercept = median(heart$sysBP), color = "red")
+summary(heart$sysBP)
+# heart$sysBP <- (heart$sysBP - mean(heart$sysBP)) / mean(heart$sysBP)
+
+heart %>%
+  ggplot(aes(diaBP, fill = y)) + 
+  geom_histogram(binwidth = 10, color = "black") +
+  scale_x_continuous() + 
+  facet_grid(male ~ y, labeller = labeller(male = label_both, y = label_both)) +
+  geom_vline(xintercept = median(heart$diaBP), color = "red")
+summary(heart$diaBP)
+# heart$diaBP <- (heart$diaBP - mean(heart$diaBP)) / mean(heart$diaBP)
+
+heart %>%
+  ggplot(aes(BMI, fill = y)) + 
+  geom_histogram(binwidth = 5, color = "black") +
+  scale_x_continuous() + 
+  facet_grid(male ~ y, labeller = labeller(male = label_both, y = label_both)) +
+  geom_vline(xintercept = median(heart$BMI), color = "red")
+summary(heart$BMI)
+# heart$BMI <- (heart$BMI - mean(heart$BMI)) / mean(heart$BMI)
+
+heart %>%
+  ggplot(aes(heartRate, fill = y)) + 
+  geom_histogram(binwidth = 10, color = "black") +
+  scale_x_continuous() + 
+  facet_grid(male ~ y, labeller = labeller(male = label_both, y = label_both)) +
+  geom_vline(xintercept = median(heart$heartRate), color = "red")
+summary(heart$heartRate)
+# heart$heartRate <- (heart$heartRate - mean(heart$heartRate)) / mean(heart$heartRate)
+
+# heart %>%
+#   ggplot(aes(glucose, fill = y)) + 
+#   geom_histogram(binwidth = 20, color = "black") +
+#   scale_x_continuous() + 
+#   facet_grid(male ~ y, labeller = labeller(male = label_both, y = label_both)) +
+#   geom_vline(xintercept = median(heart$glucose), color = "red")
+
+# It can be seen that the values of education are not strictly numerical but are instead 4 levels.
+# Since the magnitude by which education levels are represented are in the order of increments that
+# fall close to what some numeric score (like number of years), so it is save to leave education as is
+
+# Similarly there are several binary (0 or 1) values that ore logically factors, but they can also be
+# represented by 0 and 1
+
+# Also, prevelant stroke does not seem to be present much (only 21 times, and only slightly favors
+# a diseased outcome). But because it has a slight tilt towards increased risk, I decide to just keep
+# this input dangling there for now
+heart %>% group_by(prevalentStroke, y) %>% summarise(n = n())
+
+```
+
+
+
+```{r data_partition}
+#####################################################################################
+# Data Partitioning
+# -----------------
+# First, use the caret package to Split the data into training and test sets.
+#
+# Since I have significant amout of data (about 4000 rows), I allocate 20% of data
+# for test and 8% for training, still giving me sufficient data to train
+#####################################################################################
+set.seed(1)
+v_index <- createDataPartition(y = heart$y, times = 1, p = 0.1, list = FALSE)
+other <- heart[-v_index,]
+test <- heart[v_index,]
+
+# ALso get a validation sample from the training data. The test data will be used for tuning
+# parameters like determining the K for KNN. I am keeping it independent of the test data
+# so I don't risk the integrity of the overall performance.
+#
+# (I will later use this data just to find the right K for KNN, so bootstrapping it out of the
+# training data should not cause too much bias towards the training set)
+t_index <- createDataPartition(y = other$y, times = 1, p = 0.1, list = FALSE)
+val <- other[t_index,]
+train <- other[-t_index,]
+
+#####################################################################################
+# Quick Check
+#####################################################################################
+# I have similar distribution of healthy and diseased patients in both training and test sets
+# so the partition is done properly by caret as one would expect
+mean(as.numeric(as.character(train$y)))
+mean(as.numeric(as.character(test$y)))
+mean(as.numeric(as.character(val$y)))
+
+```
+
+
+```{r model_input}
+
+
+```
+```{r model_evaluation}
+
+
+```
+
+
+
+
+
+
+
+
+
+```{r data_visualization}
+
+
+```
+
+With age, there is probably a confounder: people who are young and healthy probably won't seek heart care (not seeking heart care being a confounder to being young) and hence will not contribute to the training data, or for that matter,
+prediction.
+
+```{r problem_analysis}
+
+```
+
+
+```{r test1}
+# summary(heart)
+```
+
+
+
+## Conclusion
+# Results and Outcomes
+The resulsts indicate
+
+
+# Recommendations
+Improved data collection compaings. Especiall incorporating genomic data (both population/stratified and individucal), health metrics from wearable devices, moving forward
+
+# Shortcomings and Areas of Improvement
+The models provided useful but less-than-perfect predictions. There are still several false negatives, emphpasizing that the date can only pinpoint general improvement with savings (lives and treatment costs for unnecessary treatments) on the populaton level, simply serving to improve guidelines and triage more effectively; on individual level, this is not a sure-shot predictor of disease (at least not yet, until we start to incorporate some of the recommendation and start to understand, through improved modeling and more health science and biochemical insights, the disease accurately). The more data, and the more relevant data, the more such models can pinpoint outcomes better.
+
+
+More hyperparmeter tuning
+More data
+
