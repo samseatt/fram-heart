@@ -479,11 +479,8 @@ y_hat_logit <- ifelse(p_hat_logit > 0.5, 1, 0) %>% factor
 cm <- confusionMatrix(y_hat_logit, test$y)
 accuracy_results <- tibble(method = "logical regression - all params", accuracy = cm$overall["Accuracy"])
 specificity_results <- tibble(method = "logical regression - all params", specificity = cm$byClass["Specificity"])
-acc_input_selection <- tibble(method = "logical regression - all params", accuracy = cm$overall["Accuracy"])
-spec_input_selection <- tibble(method = "logical regression - all params", specificity = cm$byClass["Specificity"])
 
-cm
-
+plot(p_hat_logit)
 
 ##################################################################################################
 # Model 2: K-Nearest Neighbors (KNN)
@@ -499,6 +496,7 @@ accuracy_results <- bind_rows(accuracy_results, tibble(method = "knn caret", acc
 specificity_results <- bind_rows(specificity_results, tibble(method = "knn caret", specificity = cm$byClass["Specificity"]))
 
 
+plot(train_knn)
 
 ##################################################################################################
 # Model 3: Quadratic Discriminant Analysis (QDA)
@@ -509,7 +507,6 @@ y_hat <- predict(train_qda, test)
 cm <- confusionMatrix(data = y_hat, reference = test$y)
 accuracy_results <- bind_rows(accuracy_results, tibble(method = "quadratic discriminant analysis (QDA)", accuracy = cm$overall["Accuracy"]))
 specificity_results <- bind_rows(specificity_results, tibble(method = "quadratic discriminant analysis (QDA)", specificity = cm$byClass["Specificity"]))
-
 
 ##################################################################################################
 # Model 4: Linear Discriminant Analysys (LDA)
@@ -522,9 +519,8 @@ cm <- confusionMatrix(data = y_hat, reference = test$y)
 accuracy_results <- bind_rows(accuracy_results, tibble(method = "linear discriminant analysis (LDA)", accuracy = cm$overall["Accuracy"]))
 specificity_results <- bind_rows(specificity_results, tibble(method = "linear discriminant analysis (LDA)", specificity = cm$byClass["Specificity"]))
 
-
 ##################################################################################################
-# Model 6: Decision Tree - using rpart
+# Model 5: Decision Tree - using rpart
 ##################################################################################################
 # Decision Tree using rpart
 library(rpart)
@@ -538,9 +534,10 @@ cm <- confusionMatrix(data = y_hat, reference = test$y)
 accuracy_results <- bind_rows(accuracy_results, tibble(method = "decision tree (CART)", accuracy = cm$overall["Accuracy"]))
 specificity_results <- bind_rows(specificity_results, tibble(method = "decision tree (CART)", specificity = cm$byClass["Specificity"]))
 
+plot(train_rpart)
 
 ##################################################################################################
-# Model 7: Random Forest
+# Model 6: Random Forest
 ##################################################################################################
 library(randomForest)
 
@@ -553,6 +550,7 @@ cm <- confusionMatrix(predict(train_rf, test), test$y)
 accuracy_results <- bind_rows(accuracy_results, tibble(method = "random forest", accuracy = cm$overall["Accuracy"]))
 specificity_results <- bind_rows(specificity_results, tibble(method = "random forest", specificity = cm$byClass["Specificity"]))
 
+plot(train_rf)
 
 ##################################################################################################
 # Final Model Selection
@@ -594,9 +592,112 @@ summary(glm_fit_reduced)
 # investing a significant amount of money on collecting the inputs that are not useful.
 
 
-## PART 2 - 
-## BONUS: By comapring Framingham Data Set with UCI Data Set
+##################################################################################################
+## PART 2 - Comapring Framingham Data Set with UCI Data Set
+##################################################################################################
+# Load UCI Heart database. Again I downloaded and save the dataset CSV file in my GitHub repository
+# fist to make download from R script possible.
 myfile <- "https://raw.githubusercontent.com/samseatt/fram-heart/master/data/uci.csv"
 uci_heart <- read_csv(myfile)
 
+# Convert the binary output into a factor
+uci_heart$target <- as.factor(uci_heart$target)
 
+# Rename output column to y
+names(uci_heart)[names(uci_heart) == 'target'] <- 'y'
+
+# Take a peak at the data to understand it and see how it compares to the Framingham study's
+# independent variables
+head(uci_heart)
+str(uci_heart)
+summary(uci_heart)
+
+# Partition UCI Heart dataset into traiing and test
+set.seed(1)
+t_index <- createDataPartition(y = uci_heart$y, times = 1, p = 0.2, list = FALSE)
+train <- uci_heart[-t_index,]
+test <- uci_heart[t_index,]
+
+# Run all the models
+
+#####################################################################################
+# Model 1B: Logistic Regression - with all predictors
+#####################################################################################
+# Now let's try linear regression again, but train it on all 13 inputs. As I added moore inputs, first things I
+# noticed was that specificity also increased. This is important as some
+
+glm_fit <- train %>% 
+  glm(y ~ age + ca + chol + cp + oldpeak, data=., family = "binomial")
+
+p_hat_logit <- predict(glm_fit, newdata = test, type = "response")
+y_hat_logit <- ifelse(p_hat_logit > 0.5, 1, 0) %>% factor
+cm <- confusionMatrix(y_hat_logit, test$y)
+uci_accuracy_results <- tibble(method = "logical regression - all params", accuracy = cm$overall["Accuracy"])
+uci_specificity_results <- tibble(method = "logical regression - all params", specificity = cm$byClass["Specificity"])
+
+plot(p_hat_logit)
+
+##################################################################################################
+# Model 2B: K-Nearest Neighbors (KNN)
+##################################################################################################
+# Let's try KNN using caret
+train_knn <- train(y ~ ., method = "knn", 
+                   data = train,
+                   tuneGrid = data.frame(k = seq(1, 40, 2)))
+train_knn$bestTune
+confusionMatrix(predict(train_knn, test, type = "raw"),
+                test$y)
+uci_accuracy_results <- bind_rows(accuracy_results, tibble(method = "knn caret", accuracy = cm$overall["Accuracy"]))
+uci_specificity_results <- bind_rows(specificity_results, tibble(method = "knn caret", specificity = cm$byClass["Specificity"]))
+
+plot(train_knn)
+
+##################################################################################################
+# Model 3B: Quadratic Discriminant Analysis (QDA)
+##################################################################################################
+train_qda <- train(y ~ ., method = "qda", data = train)
+y_hat <- predict(train_qda, test)
+cm <- confusionMatrix(data = y_hat, reference = test$y)
+uci_accuracy_results <- bind_rows(accuracy_results, tibble(method = "quadratic discriminant analysis (QDA)", accuracy = cm$overall["Accuracy"]))
+uci_specificity_results <- bind_rows(specificity_results, tibble(method = "quadratic discriminant analysis (QDA)", specificity = cm$byClass["Specificity"]))
+# ... The results wit QDA are very good. Similar to logistic regression
+
+##################################################################################################
+# Model 4B: Linear Discriminant Analysys (LDA)
+##################################################################################################
+train_lda <- train(y ~ .,
+                   method = "lda",
+                   train)
+y_hat <- predict(train_lda, test)
+cm <- confusionMatrix(data = y_hat, reference = test$y)
+uci_accuracy_results <- bind_rows(accuracy_results, tibble(method = "linear discriminant analysis (LDA)", accuracy = cm$overall["Accuracy"]))
+uci_specificity_results <- bind_rows(specificity_results, tibble(method = "linear discriminant analysis (LDA)", specificity = cm$byClass["Specificity"]))
+# ... Not bad, but the specificity has dropped a little - not perfect for medical diagnostic
+
+##################################################################################################
+# Model 5B: Decision Tree - using rpart
+##################################################################################################
+# Decision Tree using rpart
+train_rpart <- train(y ~ ., 
+                     method = "rpart",
+                     tuneGrid = data.frame(cp = seq(0, 0.5, len = 25)),
+                     data = train)
+
+y_hat <- predict(train_rpart, test)
+cm <- confusionMatrix(data = y_hat, reference = test$y)
+uci_accuracy_results <- bind_rows(accuracy_results, tibble(method = "decision tree (CART)", accuracy = cm$overall["Accuracy"]))
+uci_specificity_results <- bind_rows(specificity_results, tibble(method = "decision tree (CART)", specificity = cm$byClass["Specificity"]))
+
+plot(train_rpart)
+
+##################################################################################################
+# Model 6B: Random Forest
+##################################################################################################
+# Random Forest
+train_rf <- randomForest(y ~ ., data=train)
+cm <- confusionMatrix(predict(train_rf, test), test$y)
+uci_accuracy_results <- bind_rows(accuracy_results, tibble(method = "random forest", accuracy = cm$overall["Accuracy"]))
+uci_specificity_results <- bind_rows(specificity_results, tibble(method = "random forest", specificity = cm$byClass["Specificity"]))
+# ... it's good, but still not as good as Logical Regression
+
+plot(train_rf)
