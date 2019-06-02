@@ -4,7 +4,7 @@
 # Creation Date: May 15, 2019
 #
 # HarvardX/edX Data Science Capstone - CYO - Modeling and Predicting Heart Disease using the
-# Kaggle Framingham Heart study dataset
+# Kaggle Framingham Heart Study dataset
 #
 # File Path: code/model.R
 # Project Name: fram-heart
@@ -556,14 +556,26 @@ plot(train_rf)
 # Final Model Selection
 # ---------------------
 #
-# The best performing are
-# x better
-# but lr has better sensitivity
-# of course we can play with hyper-parameters of each models to further tweek the numbers up and down,
-# however I picked logistic regression as it is a simpler model and there is no need to use a more complex
-# classification model if logistic regression does the tirck
+# The best performing are those that have hight accuracy and specificity. These include
+#   Logical regression
+#   QDA
+#   LDA
+#   Random forest
+#
+# QDA has best specificity at the slight relative loss of accuracy
+# Random forest has the best accuracy 
+# Logistic regression also shows are reasonable combination of accuracy and prediction while
+# at the same time being simpler to use with a much better performance compared to some of the
+# others.
+#
+# Of course we can play with hyper-parameters of each model and further pre-process some of the inputs
+# to further tweek the numbers up and down.
+#
+# I pick logistic regression as it is a simpler model and there is no need to use a more complex
+# classification model if logistic regression does the trick.
+#
 # Furthermore since specificity is more important than precision, I tune the model to give more weight
-# to specificity rather than precision when training
+# to specificity rather than precision when training.
 ##################################################################################################
 glm_fit_all <- train %>% 
   glm(y ~ male + age + currentSmoker + cigsPerDay + BPMeds + prevalentStroke + prevalentHyp + diabetes + totChol + sysBP + diaBP + BMI + heartRate, data=., family = "binomial")
@@ -691,7 +703,7 @@ uci_specificity_results <- bind_rows(uci_specificity_results, tibble(method = "d
 plot(train_rpart)
 
 plot(train_rpart$finalModel, target = 0.1)
-text(train_rpart$finalModel, cex = 0.75)
+text(train_rpart$finalModel, cex = 1)
 
 ##################################################################################################
 # Model 6B: Random Forest
@@ -704,3 +716,4 @@ uci_specificity_results <- bind_rows(uci_specificity_results, tibble(method = "r
 # ... it's good, but still not as good as Logical Regression
 
 plot(train_rf)
+

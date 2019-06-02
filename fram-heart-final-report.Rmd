@@ -9,36 +9,36 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Excecutive Summary
-This project attempts to predict the risk and existence, respectively, of heart disease using two separate datasets, respectively, from Kaggle. The datasets are described, extracted/downloaded, sanitized for ML modeling, partitioned, explored and visualized. This is done to better understand the data, determine that data can be most effectively used for modeling, and to prepare the data for training and testign the models. THen modelling (and hyper-parameter tuning where applicable) is performed.
+# Executive Summary
+This project attempts to predict the risk and existence, respectively, of heart disease using two separate datasets, respectively, from Kaggle. The datasets are described, extracted/downloaded, sanitized for ML modeling, partitioned, explored and visualized. This is done to better understand the data, determine that data can be most effectively used for modeling, and to prepare the data for training and testing the models. Then modelling (and hyper-parameter tuning where applicable) is performed.
 
 This document describes my analysis, presents the findings, and attempts to formulate some preliminary recommendations.
 
 Heart disease is affecting or will affect hundreds of millions of people alive today around the world. According to the US CDC (https://www.cdc.gov/heartdisease/facts.htm): "About 610,000 people die of heart disease in the United States every year – that's 1 in every 4 deaths. Heart disease is the leading cause of death for both men and women." with coronary Heart Disease (CHD) leading the charts. This makes predicting heart disease, and especially CHD, a medically and socially important area of study.
 
-Heart disease is also a complex diseases with multiple contributing factors that lead to the buildup of plaque in the arteries; this plaque buildup is highly correlated to the symptoms normally attributed to heart disease of heart failure. The factors that are considered to contribute to the progression of heart disease are quite diverse, and range: from diet and lifestyle, to stress levels and other envirhmental factors, to genetics and family history. Each of these factors often has a partial effect to the disease progression and onset.
+Heart disease is also a complex disease with multiple contributing factors that lead to the buildup of plaque in the arteries; this plaque buildup is highly correlated to the symptoms normally attributed to heart disease of heart failure. The factors that are considered to contribute to the progression of heart disease are quite diverse, and range: from diet and lifestyle, to stress levels and other environmental factors, to genetics and family history. Each of these factors often has a partial effect to the disease progression and onset.
 
-Finaly, heart diseases is also predictable and "early action" has very significant preventative benefit. Thus this makes the problem of heart disease prediction, or heart disease risk prediction, a tractable and useful one to (partly) address through machine learning models.
+Finally, heart diseases is also predictable and "early action" has very significant preventative benefit. Thus, this makes the problem of heart disease prediction, or heart disease risk prediction, a tractable and useful one to (partly) address through machine learning models.
 
 ### About this Project
 Project GitHub Repository:
     https://github.com/samseatt/fram-heart
 
-The Readme file (https://raw.githubusercontent.com/samseatt/fram-heart/master/Readme.txt) in the GithHub repository describes how to set up this project (if you are interested beyond the artifact attached with this submission). Basically you can download my RStudio project file in the GitHub reposirory, or you may simply Run model.R file or Knit fram-heart-report.Rmd file from any RStudio project, provided you have some basic R libraries installed.
+The Readme file (https://raw.githubusercontent.com/samseatt/fram-heart/master/Readme.txt) in the GithHub repository describes how to set up this project (if you are interested beyond the artifact attached with this submission). Basically you can download my RStudio project file in the GitHub repository, or you may simply Run model.R file or Knit fram-heart-report.Rmd file from any RStudio project, provided you have some basic R libraries installed.
 
 The project analyzes and runs models on the two datasets listed in the next section.
 
 ### Goals and Objectives
 
-The goal of this modeling exercise is to be able to obtain better healthcare outcomes when it comes to predicting heart disease and designing appropriate and suitable treatment plans for patients being screened/tested. Two additonal proposed benefits include (a) understanding the predictors and their impact on the progression of this disease; and (b) possibly modeling heart disease more comprehensively with elements of precision medicine and stratified healthcare in mind (e.g. incorporating genomic data and IoT/Fitbit-like health metrics that will get ubiquitously sequenced/collected).
+The goal of this modeling exercise is to be able to obtain better healthcare outcomes when it comes to predicting heart disease and designing appropriate and suitable treatment plans for patients being screened/tested. Two additional proposed benefits include (a) understanding the predictors and their impact on the progression of this disease; and (b) possibly modeling heart disease more comprehensively with elements of precision medicine and stratified healthcare in mind (e.g. incorporating genomic data and IoT/Fitbit-like health metrics that will get ubiquitously sequenced/collected).
 
-Of course a more informally obvious reason is to demonstrate and consolidate my learning of data science, especially of machine learning. In this last vein I will demonstrate some ideas and slightly alter the flow of the document to over explain some of my under-the-hood reasoning that will often be omitted in the more formal and more final research writups.
+Of course, a more informally obvious reason is to demonstrate and consolidate my learning of data science, especially of machine learning. In this last vein I will demonstrate some ideas and slightly alter the flow of the document to over explain some of my under-the-hood reasoning that will often be omitted in the more formal and more final research write-ups.
 
 The objective of my models is binary classification.
 
 I will test several ML models. This will not only allow me to understand and apply various classification models we studied, but will also provide a better understanding to the relative benefits and deficiencies of each model through these two use cases, and, as well, to determine which model(s) should best be used for further training and prediction in real life.
 
-Using two separate data sets to predict two similar but subtly different outcomes should assist in better understanding the type of prediction tasks we may encounter, the technical (ML, data collection) and non-technical challenges (for example when predicting qualitative outcomes) involved, and to understand the relevance to the data collection campaings as well as on the timely availability (or not) of the same data at prediction time. Some if this lies beyond the scope of this project, but this is definitely a good starting point to start thinking about all that.
+Using two separate data sets to predict two similar but subtly different outcomes should assist in better understanding the type of prediction tasks we may encounter, the technical (ML, data collection) and non-technical challenges (for example when predicting qualitative outcomes) involved, and to understand the relevance to the data collection campaigns as well as on the timely availability (or not) of the same data at prediction time. Some if this lies beyond the scope of this project, but this is definitely a good starting point to start thinking about all that.
 
 
 ### Datasets
@@ -48,20 +48,20 @@ The Framingham Study data set (the first dataset analyzed) drives my primary inv
 
 The UCI (Cleveland Study) Heart dataset, on the other hand, tracks already present heart disease. It thus supports the relatively easier and more structured task of predicting existing heart disease.
 
-Thos additional dataset is trained in order to gain further comparative insights around data collection, modeling, and results interpretation.
+This additional dataset is trained in order to gain further comparative insights around data collection, modeling, and results interpretation.
 
 ##### Framingham Heart Study dataset:
       https://www.kaggle.com/amanajmera1/framingham-heart-study-dataset
       https://raw.githubusercontent.com/samseatt/fram-heart/master/data/framingham.csv
  
 *  Output (Dependent Variable):
-    + TenYearCHD: Chance of getting Coronory Heart Disease within 10 years (0: no, 1: yes)
+    + TenYearCHD: Chance of getting Coronary Heart Disease within 10 years (0: no, 1: yes)
     
 * Inputs (Independent Variable):
     + male: 0 = Female; 1 = Male
     + age: Age at exam time.
     + education: 1 = Some High School; 2 = High School or GED; 3 = Some College or Vocational School; 4 = college
-    + currentSmoker: 0 = nonsmoker; 1 = smoker
+    + currentSmoker: 0 = non-smoker; 1 = smoker
     + cigsPerDay: Number of cigarettes smoked per day (estimated average)
     + BPMeds: 0 = Not on Blood Pressure medications; 1 = Is on Blood Pressure medications
     + prevalentStroke: Prevalent stroke -  0 = No; 1 = Yes
@@ -87,27 +87,27 @@ Thos additional dataset is trained in order to gain further comparative insights
     + sex | (1 = male; 0 = female)
     + cp: Chest pain type
     + trestbps: Resting blood pressure (in mm Hg on admission to the hospital)
-    + chol: Serum cholestoral in mg/dl
+    + chol: Serum cholesterol in mg/dl
     + fbs: Fasting blood sugar > 120 mg/dl) (1 = true; 0 = false)
     + restecg: Resting electrocardiographic results
     + thalach: Maximum heart rate achieved
     + exang: Exercise induced angina (1 = yes; 0 = no)
     + oldpeak: ST depression induced by exercise relative to rest
     + slope: The slope of the peak exercise ST segment
-    + ca: Number of major vessels (0-3) colored by flourosopy
-    + thal: Thallium heart scan / stress test: 3 = normal; 6 = fixed defect; 7 = reversable defect
+    + ca: Number of major vessels (0-3) colored by fluoroscopy
+    + thal: Thallium heart scan / stress test: 3 = normal; 6 = fixed defect; 7 = reversible defect
 
 ### Key Steps Performed
-This subsection hightlights the key steps performed during this analysis. The output of these steps is furnished in the section that follows.
+This subsection highlights the key steps performed during this analysis. The output of these steps is furnished in the section that follows.
 
-* Framingham Heart Study dataset (described first above) is loaded and checked for consistency usint tasks like input inspection, data wrangling and exploratory plotting.
+* Framingham Heart Study dataset (described first above) is loaded and checked for consistency usint tgsks like input inspection, data wrangling and exploratory plotting.
 * The data is then cleaned and separated into training (train) and testing (test) data sets.
 * The data is analyzed in details to understand relationships and help in proper input selection and model selection.
 * Six binary classification different models are run on the curated Framingham Heart Study dataset. Model hyper-parameters are tuned further where necessary. The models are evaluated include:
     + Logistic regression
     + K-Nearest Neighbors (KNN)
     + Quadratic Discriminant Analysis (QDA)
-    + Linear Discriminant Analysys (LDA)
+    + Linear Discriminant Analysis (LDA)
     + Decision Tree (CART) - using rpart
     + Random Forest
 * The results are then evaluated primarily for specificity and precision, with higher emphasis on specificity
@@ -119,7 +119,7 @@ This subsection hightlights the key steps performed during this analysis. The ou
 
 Process and techniques used are described in following sub-sections in more or less the sequence in which they are applied.
 
-### Reading/loading and understaning the data
+### Reading/loading and understanding the data
 The data is first loaded from and external CSV file, into an R dataframe object: $$"spec_tbl_df" "tbl_df" "tbl" "data.frame"$$
 
 ```{r echo=FALSE, include=FALSE, message=FALSE, warning=FALSE }
@@ -151,7 +151,7 @@ plotOutcome <- function(df, dfcol, bw) {
 }
 
 ```
-Used head() and str() to check the data columns and their format. This information is useful in determining what data transformaton will be required (during the data cleaning step) for proper ML modeling.
+Used head() and str() to check the data columns and their format. This information is useful in determining what data transformation will be required (during the data cleaning step) for proper ML modeling.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
 head(heart)
@@ -166,14 +166,14 @@ summary(heart)
 This gives us the ranges and means of each input parameter (and the output). The ranges appear to not vary too much from each other (all values are within a couple of hundred), so normalization is not necessary. I will thus leave the inputs un-normalized so their graphs and stats are more intuitive to follow.
 
 
-### Data cleansing
-First, keeping with convension, I rename the output column to y. I also change this output to be a factor as classification is about predicting between competing outcomes and not predicting numeric values.
+### Data cleaning
+First, keeping with transformation, I rename the output column to y. I also change this output to be a factor as classification is about predicting between competing outcomes and not predicting numeric values.
 ```{r echo=FALSE, include=FALSE, message=FALSE, warning=FALSE }
 names(heart)[names(heart) == 'TenYearCHD'] <- 'y'
 heart$y <- as.factor(heart$y)
 ```
 
-In my data wrangling exercise I do see several NA values (645 in total). I would need to remove these as part of data cleaning.
+In my data wrangling exercise, I do see several NA values (645 in total). I would need to remove these as part of data cleaning.
 
 ```{r echo=FALSE, include=FALSE, message=FALSE, warning=FALSE }
 nrow(heart)
@@ -182,7 +182,7 @@ colSums(is.na.data.frame(heart))
 ```
 
 I also see that 388 of these missing values are for glucose.
-Removing all these rows will be a significant (but not overwhelming) loss of 9.2% of the data. So let's first see how useful glucose level is in predicting heart disease.
+Removing all these rows will be a significant (but not overwhelming) loss of 9.2% of the data. So, let's first see how useful glucose level is in predicting heart disease.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
 heart %>%
@@ -196,7 +196,7 @@ heart %>% group_by(male, y) %>% summarise(n = n())
 
 Well, it seems fairly even key for both healthy and diseased outcomes, but healthy subjects slightly favor towards lower glucose levels (bigger red bars on the left side, for both genders).  The contribution is very slight, and therefore, I decide to save the rows and simply drop the glucose column.
 
-Another secondary reason for removing this columns with high NA is that it will also be likely to missing more often in real life and affect prediction. This would be a good time to ask the subject matter experts to see why the blood glucose information is not readily available in patient data. (One possible reason would be that it is considered more related to diabetes or diabetes mediate heart disease, and may not be always ordered in the blood test. So it is not likely that much tied to heart disease even from the point of view of the medical professionals)
+Another secondary reason for removing this column with high NA is that it will also be likely to missing more often in real life and affect prediction. This would be a good time to ask the subject matter experts to see why the blood glucose information is not readily available in patient data. (One possible reason would be that it is considered more related to diabetes or diabetes mediate heart disease, and may not be always ordered in the blood test. So, it is not likely that much tied to heart disease even from the point of view of the medical professionals)
 
 ```{r echo=FALSE, include=FALSE, message=FALSE, warning=FALSE }
 # Remove glucose column
@@ -218,13 +218,13 @@ heart %>%
 heart$education <- NULL
 ```
 
-Now we have relatively few rows with NAs and can affort to throw them away. So I now get rid of all the rows in which NA values still remain.
+Now we have relatively few rows with NAs and can afford to throw them away. So, I now get rid of all the rows in which NA values still remain.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
 heart <- na.omit(heart)
 nrow(heart)
 ```
-Now I have 4090 rows to train and validate. This seems just about right to get a good representative training in reasonable time, allowing to run the models relatively quickly and comparing multipe models.
+Now I have 4090 rows to train and validate. This seems just about right to get a good representative training in reasonable time, allowing to run the models relatively quickly and comparing multiple models.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
 sum(as.numeric(as.character(heart$y)))
@@ -244,15 +244,15 @@ hist(heart$male)
 heart %>% group_by(male, y) %>% summarise(n = n())
 ```
 
-Check correlations beteen inputs (independenat variables that ideally should not be correlated in order to get the maximum benfit of each) and between imputs and output (the dependant variable, where correlation should exist). 
+Check correlations between inputs (independent variables that ideally should not be correlated in order to get the maximum benifit of each) and between inputs and output (the dependant variable, where correlation should exist). 
 
-Correlaton between age and systolic blood pressure:
+Correlation between age and systolic blood pressure:
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
 ggplot(data = heart) + geom_point(aes(age, sysBP))
 cor(heart$age, heart$sysBP)
 ```
 
-As expected, there is some correlation showing blood pressure deteriorates with age. But not entirely, as the correlation is not very strong. So we can consider BP to be an independent variable along with age for the purpose of heart risk prediction.
+As expected, there is some correlation showing blood pressure deteriorates with age. But not entirely, as the correlation is not very strong. So, we can consider BP to be an independent variable along with age for the purpose of heart risk prediction.
 
 Correlation between age and cigarettes per day:
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
@@ -268,9 +268,9 @@ ggplot(data = heart) + geom_point(aes(age, totChol))
 cor(heart$age, heart$totChol)
 ```
 
-Somehow we don't have a strong positive correlation between age and total cholesterol. In other words, total cholesterol does not increase drastically with age - this could be because younger people have higher HDL (good cholesterol i.e. we should have been seeking cholesterol ratio instead), or older patients are more likely to be on cholesterol-lowering medicines, or younger people in the study are those who had a reason to get their heart metrics checked, or some other medical reason like the dimensions of the cholesterol molecules. In any case, whether or not total cholesterol (rather than cholesterol ratio) is a good predictor, we can safely include it as a variable independent of age.
+Somehow, we don't have a strong positive correlation between age and total cholesterol. In other words, total cholesterol does not increase drastically with age - this could be because younger people have higher HDL (good cholesterol i.e. we should have been seeking cholesterol ratio instead), or older patients are more likely to be on cholesterol-lowering medicines, or younger people in the study are those who had a reason to get their heart metrics checked, or some other medical reason like the dimensions of the cholesterol molecules. In any case, whether or not total cholesterol (rather than cholesterol ratio) is a good predictor, we can safely include it as a variable independent of age.
 
-Correlation between systolic BP and diastolid BP
+Correlation between systolic BP and diastolic BP
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
 ggplot(data = heart) + geom_point(aes(sysBP, diaBP))
 cor(heart$sysBP, heart$diaBP)
@@ -278,7 +278,7 @@ cor(heart$sysBP, heart$diaBP)
 
 As seen from the above graph and the correlation values, the two blood pressures are correlated, however the correlation is not complete, so I will keep both these inputs for the analysis as the second input can still provide additional training information.
 
-I visualize all the inputs using boxplots to see the relative contribution of each on healthy vs. deseased outcomes (after 10 years)
+I visualize all the inputs using boxplots to see the relative contribution of each on healthy vs. diseased outcomes (after 10 years)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
 ggplot(data = fram_heart) + geom_boxplot(aes(as.factor(TenYearCHD), age), outlier.colour = "red", outlier.shape = 1, na.rm = TRUE) +
@@ -299,7 +299,7 @@ ggplot(data = fram_heart) + geom_boxplot(aes(as.factor(TenYearCHD), glucose), ou
   labs(title = "Relative variability of Glucose Level", x = "Ten Year CHD", y = "Blood Glucose")
 ```
 
-We see, omong other things, that the average cigarates consumption is close to zero cigarettes for healthy vs. higher for those who will end up with CHD.
+We see, among other things, that the average cigarettes consumption is close to zero cigarettes for healthy vs. higher for those who will end up with CHD.
 
 Also, heart rate does not seem to be a good indicator of the 10-year onset of CHD.
 
@@ -409,7 +409,7 @@ heart %>%
 summary(heart$heartRate)
 ```
 
-Also, prevelant stroke does not seem to be present much (only 22 times, and only slightly favors a diseased outcome). But it has a slight tilt towards increased risk.
+Also, prevalent stroke does not seem to be present much (only 22 times, and only slightly favors a diseased outcome). But it has a slight tilt towards increased risk.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
 heart %>% group_by(prevalentStroke, y) %>% summarise(n = n())
@@ -419,11 +419,11 @@ heart %>% group_by(prevalentStroke, y) %>% summarise(n = n())
 ### Modeling approach
 I use the caret package to Split the data into training and test sets.
 
-Since I have significant amout of data (over 4000 rows), I allocate 20% of data for test and 80% for training, still giving me sufficient data to train
+Since I have significant amount of data (over 4000 rows), I allocate 20% of data for test and 80% for training, still giving me sufficient data to train
 
 Since this is a classification problem with binary outcomes, precision and specificity (and related complex metrics like F score) will be used for analyzing different models and their permutations. Specificity will be valued much higher because false negatives have high consequences: when an at-risk patient drops off from life-saving treatment options.
 
-The goal of this analysis is to train the most appropriate model for this problem. In addition to specificity and precision of prediction, emphasis is also given to performance and simpliciy of the model.
+The goal of this analysis is to train the most appropriate model for this problem. In addition to specificity and precision of prediction, emphasis is also given to performance and simplicity of the model.
 
 I repeat the model for the UCI/Cleveland Heart dataset and gain some insights around the subtle difference between predicting what has happened vs. the chance of something happening (predicting the prediction, so to speak).
 
@@ -486,7 +486,7 @@ accuracy_results <- bind_rows(accuracy_results, tibble(method = "quadratic discr
 specificity_results <- bind_rows(specificity_results, tibble(method = "quadratic discriminant analysis (QDA)", specificity = cm$byClass["Specificity"]))
 ```
 
-Model 4: Linear Discriminant Analysys (LDA)
+Model 4: Linear Discriminant Analysis (LDA)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
 train_lda <- train(y ~ .,
@@ -544,7 +544,7 @@ specificity_results
 
 ### Final Model Selection
 
-The best performing are those that have hight accuracy and specificity. These include
+The best performing are those that have high accuracy and specificity. These include
 * Logical regression
 * QDA
 * LDA
@@ -554,11 +554,11 @@ QDA has best specificity at the slight relative loss of accuracy
 Random forest has the best accuracy 
 Logistic regression also shows are reasonable combination of accuracy and prediction while at the same time being simpler to use with a much better performance compared to some of the others.
 
-Of course we can play with hyper-parameters of each model and further pre-process some of the inputs to further tweek the numbers up and down.
+Of course, we can play with hyper-parameters of each model and further pre-process some of the inputs to further tweak the numbers up and down.
 
 I pick logistic regression as it is a simpler model and there is no need to use a more complex classification model if logistic regression does the trick.
 
-Furthermore since specificity is more important than precision, I tune the model to give more weight to specificity rather than precision when training.
+Furthermore, since specificity is more important than precision, I tune the model to give more weight to specificity rather than precision when training.
 
 ```{r echo=FALSE, include=FALSE, message=FALSE, warning=FALSE }
 glm_fit_all <- train %>% 
@@ -575,7 +575,7 @@ cm_all
 summary(glm_fit_all)
 ```
 
-I see that male, age and sysB are the most contributing inputs towards the training of this model, while cigPerDay, diabetes and totlChol also have some contribution. THe other inputs do not shoe any significant contribution towards predicting a patient's 10-year chance of getter a heart stroke.
+I see that male, age and sysB are the most contributing inputs towards the training of this model, while cigPerDay, diabetes and totlChol also have some contribution. The other inputs do not show any significant contribution towards predicting a patient's 10-year chance of getter a heart stroke.
 
 Let's drop the unused parameters, retrain the model, and check the performance again.
 
@@ -595,11 +595,9 @@ summary(glm_fit_reduced)
 
 There is only a slight but not appreciable decrease. We can train with either option, but it's good to know where is the most buck for the benefit, in case we have to train on large amount of data or if we are investing a significant amount of money on collecting the inputs that are not useful.
 
-### Comapring Framingham Data Set with UCI Data Set
+### Comparing Framingham Data Set with UCI Data Set
 ```{r echo=FALSE, include=FALSE, message=FALSE, warning=FALSE }
-##################################################################################################
-## PART B - Comapring Framingham Data Set with UCI Data Set
-##################################################################################################
+
 # Load UCI Heart database. Again I downloaded and save the dataset CSV file in my GitHub repository
 # fist to make download from R script possible.
 myfile <- "https://raw.githubusercontent.com/samseatt/fram-heart/master/data/uci.csv"
@@ -704,35 +702,35 @@ In this case I obtain much better numbers and both good precision and specificit
 
 LDA and decision tree show the best overall results with both high accuracies and specificities.
 
-I pick decision tree for this problem as it also provide a much better visual and logical output that healthcare professional can interactiely look at as a comprehensive diagnostic approach, either for the purpose of improving thier own diagnostics, or improving the machine learning model based on thier own subject matter expertese around diagnosing heart disease. The following decision tree output demonstrates this:
+I pick decision tree for this problem as it also provides a much better visual and logical output that healthcare professional can interactively look at as a comprehensive diagnostic approach, either for the purpose of improving their own diagnostics, or improving the machine learning model based on their own subject matter expertise around diagnosing heart disease. The following decision tree output demonstrates this:
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
 plot(train_rpart)
 
 plot(train_rpart$finalModel, target = 0.1)
-text(train_rpart$finalModel, cex = 0.75)
+text(train_rpart$finalModel, cex = 1)
 ```
 
 # Conclusion
-This became a bigger undertaking than what I started out with (and what was required from me). In addition to finding the best model and predictiing it for diagnostic purposes, I wanted to see why the given dataset (Framingham, in this case) was not gettiing very good performance despite doing all the necessary preparation. And I needed run the model on another dataset and compare the results.
+This became a bigger undertaking than what I started out with (and what was required from me). In addition to finding the best model and predicting it for diagnostic purposes, I wanted to see why the given dataset (Framingham, in this case) was not getting very good performance despite doing all the necessary preparation. And I needed run the model on another dataset and compare the results.
 
-What I found through data exploration and modelling, is that the Framingham dataset prodicts the risk, while UCI predicts the actual disease. This is one reason UCI is more accurate even with small data to train with. This is an important consideration in problem formulation: there are problems that predict what happened or is happening (this has the uncertainty of prediction); and there are problems that predict something that may happen (i.e. with double uncertainty: that of prediction and that of the chance of it happening in real life).
+What I found through data exploration and modelling, is that the Framingham dataset predicts the risk, while UCI predicts the actual disease. This is one reason UCI is more accurate even with small data to train with. This is an important consideration in problem formulation: there are problems that predict what happened or is happening (this has the uncertainty of prediction); and there are problems that predict something that may happen (i.e. with double uncertainty: that of prediction and that of the chance of it happening in real life).
 
 For training Framingham Study dataset, Linear Regression was selected and was further tuned to favor high specificity with significant but limited loss (by less than 50%) loss of precision. There is a good amount of data to train the model quite well.
 
-For training UCI Cleveland Study dataset Decision Tree was selected as the preferred and better-performing model. This dataste, in contrast to Framingham, shows much improved results even with a very small traiing set (for the reason described above).
+For training UCI Cleveland Study dataset Decision Tree was selected as the preferred and better-performing model. This dataset, in contrast to Framingham, shows much improved results even with a very small training set (for the reason described above).
 
-However, one can notice that the UCI model somehow followed the common human bias around gender and age when it comes to heart treatment: the tree graph for decision tree model (in the results section) shows that wommen aged 56 or less will never be treated for heart disease if the treatment decision is solely based on the decision tree trained here. Of course more data (UCI dataset is very small so there probably was no woman 55 or younger in the dataset with the disease) should improve such shortcomings.
+However, one can notice that the UCI model somehow followed the common human bias around gender and age when it comes to heart treatment: the tree graph for decision tree model (in the results section) shows that women aged 56 or less will never be treated for heart disease if the treatment decision is solely based on the decision tree trained here. Of course, more data (UCI dataset is very small so there probably was no woman 55 or younger in the dataset with the disease) should improve such shortcomings.
 
-On an interesting side note: our brains probably also make small-data-driven, simplistic models (as we are not suited for large number crunching at high speeds, for obvious reasons) and that may be the implicit cause of many of our human biases (like the UCI dataset posesses to a smaller degree). In machine learning it is important to not furher feed our human biases in the model, either during training or during data gathering; and this is the reason why I removed education column from the dataset before training when I didn't see any significant correlation with the output during data exploration.
+On an interesting side note: our brains probably also make small-data-driven, simplistic models (as we are not suited for large number crunching at high speeds, for obvious reasons) and that may be the implicit cause of many of our human biases (like the UCI dataset possesses to a smaller degree). In machine learning it is important to not further feed our human biases in the model, either during training or during data gathering; and this is the reason why I removed education column from the dataset before training when I didn't see any significant correlation with the output during data exploration.
 
-With age, there is probably another confounder, the data collection process itself: people who are young and healthy probably won't seek heart healthcare (not seeking heart care thus being a confounder to being young) and hence will appear at a lower propertion (of their demographic) in training data as healthy.
+With age, there is probably another confounder, the data collection process itself: people who are young and healthy probably won't seek heart healthcare (not seeking heart care thus being a confounder to being young) and hence will appear at a lower proportion (of their demographic) in training data as healthy.
 
 ### Recommendations
-Improved data collection compaings, especially incorporating genomic data (both population/stratified and individucal), health metrics from wearable devices, moving forward.
+Improved data collection campaigns, especially incorporating genomic data (both population/stratified and individual), health metrics from wearable devices, moving forward.
 
 ### Shortcomings and Areas of Improvement
-The models provided useful but less-than-perfect predictions. There are still several false negatives, emphpasizing that the data can only pinpoint general improvement (in saving lives and cutting the cost of many unnecessary treatments). At the populaton level, this can improve guidelines and help triage more effectively; on individual level, this is not a sure-shot predictor of disease (at least not yet, until we embark on more ML-targeted data collection campaigns, and develop improved modeling with more health science, biochemical, genetic, and biometric insights, the disease accurately). The more data, and the more relevant data, the more such models can pinpoint outcomes better.
+The models provided useful but less-than-perfect predictions. There are still several false negatives, emphasizing that the data can only pinpoint general improvement (in saving lives and cutting the cost of many unnecessary treatments). At the population level, this can improve guidelines and help triage more effectively; on individual level, this is not a sure-shot predictor of disease (at least not yet, until we embark on more ML-targeted data collection campaigns, and develop improved modeling with more health science, biochemical, genetic, and biometric insights, the disease accurately). The more data, and the more relevant data, the more such models can pinpoint outcomes better.
 
 # References
 Centers for Disease Control (CDC) - Heart Disease Facts: https://www.cdc.gov/heartdisease/facts.htm
