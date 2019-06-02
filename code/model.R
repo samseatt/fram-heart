@@ -18,12 +18,13 @@
 # 
 # UCI Heart Disease dataset location:
 #    https://www.kaggle.com/ronitf/heart-disease-uci
+#    https://raw.githubusercontent.com/samseatt/fram-heart/master/data/uci.csv
 #
 ##################################################################################################
 # The purpose of this R script file is to provides various methods to model, train and capture the
-# results of various competing models to analyze this linear classificaton problem
+# results of various competing models to analyze this binary classificaton problem
 #
-# This file has two parts, each using a differnt heart disease data set for Kaggle:
+# This file has two parts, each using a differnt heart disease data set from Kaggle:
 #
 #  - The first part uses the Framingham Heart Study dataset from Kaggle. This dataset is larger
 #    and lest structured compared to the second dataset. The inputs are also less specific, so
@@ -135,52 +136,7 @@ str(heart)
 # Exploring data relationships
 # ----------------------------
 # Check correlations beteen inputs (independenat variables that ideally should not be correlated in order to
-# get the maximum benfit of each) and beteen imputs and output (the dependant variable, where correlation should exist), check p values (to show statistical significance) add correlations, add 
-
-####################################################
-# Relation (if any) between selected inputs
-####################################################
-#
-# Correlaton between age and systolic blood pressure
-ggplot(data = heart) + geom_point(aes(age, sysBP))
-cor(heart$age, heart$sysBP)
-
-# Correlation between age and cigarettes per day
-ggplot(data = heart) + geom_point(aes(age, cigsPerDay))
-cor(heart$age, heart$cigsPerDay)
-
-# Correlation between age and total cholesterol
-ggplot(data = heart) + geom_point(aes(age, totChol))
-cor(heart$age, heart$totChol)
-
-ggplot(data = heart) + geom_point(aes(sysBP, diaBP))
-cor(heart$sysBP, heart$diaBP)
-# As seen from teh graph and the correlation values, the two blood pressures are correlated,
-# however the correlation is complete, so I will keep both these inputs for the analysis as
-# the second input can provide additional training information.
-
-
-####################################################
-# Relation between inputs and outputs (how each predicts heart disease risk)
-####################################################
-ggplot(data = fram_heart) + geom_boxplot(aes(as.factor(TenYearCHD), age), outlier.colour = "red", outlier.shape = 1, na.rm = TRUE) +
-  labs(title = "Relative variability of Age", x = "Ten Year CHD", y = "Age")
-ggplot(data = fram_heart) + geom_boxplot(aes(as.factor(TenYearCHD), totChol), outlier.colour = "red", outlier.shape = 1, na.rm = TRUE) +
-  labs(title = "Relative variability of Total Cholesterol", x = "Ten Year CHD", y = "Total Cholesterol")
-ggplot(data = fram_heart) + geom_boxplot(aes(as.factor(TenYearCHD), cigsPerDay), outlier.colour = "red", outlier.shape = 1, na.rm = TRUE) +
-  labs(title = "Relative variability of Cigarettes Per Day", x = "Ten Year CHD", y = "Cigarettes Per Day")
-# Average is close to zero cigarettes for health vs. higher for smokers
-
-ggplot(data = fram_heart) + geom_boxplot(aes(as.factor(TenYearCHD), sysBP), outlier.colour = "red", outlier.shape = 1, na.rm = TRUE) +
-  labs(title = "Relative variability of Systolic BP", x = "Ten Year CHD", y = "Systolic BP")
-ggplot(data = fram_heart) + geom_boxplot(aes(as.factor(TenYearCHD), diaBP), outlier.colour = "red", outlier.shape = 1, na.rm = TRUE) +
-  labs(title = "Relative variability of Diastolic BP", x = "Ten Year CHD", y = "Diastolic BP")
-ggplot(data = fram_heart) + geom_boxplot(aes(as.factor(TenYearCHD), BMI), outlier.colour = "red", outlier.shape = 1, na.rm = TRUE) +
-  labs(title = "Relative variability of Body Mass Index", x = "Ten Year CHD", y = "BMI")
-
-ggplot(data = fram_heart) + geom_boxplot(aes(as.factor(TenYearCHD), glucose), outlier.colour = "red", outlier.shape = 1, na.rm = TRUE) +
-  labs(title = "Relative variability of Glucose Level", x = "Ten Year CHD", y = "Blood Glucose")
-# Heart Rate does not seem to be a good indicator
+# get the maximum benfit of each) and beteen imputs and output (the dependant variable, where correlation should exist)
 
 
 ####################################################
@@ -202,15 +158,6 @@ summary(heart)
 # I will clean my data before I partition the data into training and test data sets, so I don't
 # have to do it twice on each set
 ##################################################################################################
-#
-# In my data wrangling exercise I do see several NA values (645 in total). I would need to remove these as part of
-# data cleaning
-nrow(heart)
-sum(is.na.data.frame(heart))
-# WIth 388 in glucose
-colSums(is.na.data.frame(heart))
-
-
 # Rename output column to y
 names(heart)[names(heart) == 'TenYearCHD'] <- 'y'
 
@@ -225,6 +172,14 @@ heart$y <- as.factor(heart$y)
 ####################################################
 # Remove column with too many NA values (for two reasons - elaborated a few lines below)
 ####################################################
+
+# In my data wrangling exercise I do see several NA values (645 in total). I would need to remove these as part of
+# data cleaning
+nrow(heart)
+sum(is.na.data.frame(heart))
+# WIth 388 in glucose
+colSums(is.na.data.frame(heart))
+
 # This will be a significant (but not overwhelming) loss of 9.2% of the data. So let's first see how
 # useful glucose level is in predicting heart disease.
 heart %>%
@@ -297,6 +252,51 @@ hist(heart$totChol)
 
 # See the distribution of totChol between diseased and healthy patinets, furhter divided by sex
 heart %>% group_by(male, y) %>% summarise(n = n())
+
+####################################################
+# Relation (if any) between selected inputs
+####################################################
+#
+# Correlaton between age and systolic blood pressure
+ggplot(data = heart) + geom_point(aes(age, sysBP))
+cor(heart$age, heart$sysBP)
+
+# Correlation between age and cigarettes per day
+ggplot(data = heart) + geom_point(aes(age, cigsPerDay))
+cor(heart$age, heart$cigsPerDay)
+
+# Correlation between age and total cholesterol
+ggplot(data = heart) + geom_point(aes(age, totChol))
+cor(heart$age, heart$totChol)
+
+ggplot(data = heart) + geom_point(aes(sysBP, diaBP))
+cor(heart$sysBP, heart$diaBP)
+# As seen from t graph and the correlation values, the two blood pressures are correlated,
+# however the correlation is complete, so I will keep both these inputs for the analysis as
+# the second input can provide additional training information.
+
+
+####################################################
+# Relation between inputs and outputs (how each predicts heart disease risk)
+####################################################
+ggplot(data = fram_heart) + geom_boxplot(aes(as.factor(TenYearCHD), age), outlier.colour = "red", outlier.shape = 1, na.rm = TRUE) +
+  labs(title = "Relative variability of Age", x = "Ten Year CHD", y = "Age")
+ggplot(data = fram_heart) + geom_boxplot(aes(as.factor(TenYearCHD), totChol), outlier.colour = "red", outlier.shape = 1, na.rm = TRUE) +
+  labs(title = "Relative variability of Total Cholesterol", x = "Ten Year CHD", y = "Total Cholesterol")
+ggplot(data = fram_heart) + geom_boxplot(aes(as.factor(TenYearCHD), cigsPerDay), outlier.colour = "red", outlier.shape = 1, na.rm = TRUE) +
+  labs(title = "Relative variability of Cigarettes Per Day", x = "Ten Year CHD", y = "Cigarettes Per Day")
+# Average is close to zero cigarettes for health vs. higher for smokers
+
+ggplot(data = fram_heart) + geom_boxplot(aes(as.factor(TenYearCHD), sysBP), outlier.colour = "red", outlier.shape = 1, na.rm = TRUE) +
+  labs(title = "Relative variability of Systolic BP", x = "Ten Year CHD", y = "Systolic BP")
+ggplot(data = fram_heart) + geom_boxplot(aes(as.factor(TenYearCHD), diaBP), outlier.colour = "red", outlier.shape = 1, na.rm = TRUE) +
+  labs(title = "Relative variability of Diastolic BP", x = "Ten Year CHD", y = "Diastolic BP")
+ggplot(data = fram_heart) + geom_boxplot(aes(as.factor(TenYearCHD), BMI), outlier.colour = "red", outlier.shape = 1, na.rm = TRUE) +
+  labs(title = "Relative variability of Body Mass Index", x = "Ten Year CHD", y = "BMI")
+
+ggplot(data = fram_heart) + geom_boxplot(aes(as.factor(TenYearCHD), glucose), outlier.colour = "red", outlier.shape = 1, na.rm = TRUE) +
+  labs(title = "Relative variability of Glucose Level", x = "Ten Year CHD", y = "Blood Glucose")
+# Heart Rate does not seem to be a good indicator
 
 ####################################################
 # Plot histograms to see the role each input plays
@@ -541,7 +541,7 @@ plot(train_rpart)
 ##################################################################################################
 library(randomForest)
 
-# plot fit to see what would be a good depth of the tree ???
+# plot fit to see what would be a good depth of the tree
 fit <- randomForest(y~., data = heart) 
 plot(fit)
 
@@ -593,7 +593,7 @@ summary(glm_fit_reduced)
 
 
 ##################################################################################################
-## PART 2 - Comapring Framingham Data Set with UCI Data Set
+## PART B - Comapring Framingham Data Set with UCI Data Set
 ##################################################################################################
 # Load UCI Heart database. Again I downloaded and save the dataset CSV file in my GitHub repository
 # fist to make download from R script possible.
@@ -647,8 +647,8 @@ train_knn <- train(y ~ ., method = "knn",
 train_knn$bestTune
 confusionMatrix(predict(train_knn, test, type = "raw"),
                 test$y)
-uci_accuracy_results <- bind_rows(accuracy_results, tibble(method = "knn caret", accuracy = cm$overall["Accuracy"]))
-uci_specificity_results <- bind_rows(specificity_results, tibble(method = "knn caret", specificity = cm$byClass["Specificity"]))
+uci_accuracy_results <- bind_rows(uci_accuracy_results, tibble(method = "knn caret", accuracy = cm$overall["Accuracy"]))
+uci_specificity_results <- bind_rows(uci_specificity_results, tibble(method = "knn caret", specificity = cm$byClass["Specificity"]))
 
 plot(train_knn)
 
@@ -658,8 +658,8 @@ plot(train_knn)
 train_qda <- train(y ~ ., method = "qda", data = train)
 y_hat <- predict(train_qda, test)
 cm <- confusionMatrix(data = y_hat, reference = test$y)
-uci_accuracy_results <- bind_rows(accuracy_results, tibble(method = "quadratic discriminant analysis (QDA)", accuracy = cm$overall["Accuracy"]))
-uci_specificity_results <- bind_rows(specificity_results, tibble(method = "quadratic discriminant analysis (QDA)", specificity = cm$byClass["Specificity"]))
+uci_accuracy_results <- bind_rows(uci_accuracy_results, tibble(method = "quadratic discriminant analysis (QDA)", accuracy = cm$overall["Accuracy"]))
+uci_specificity_results <- bind_rows(uci_specificity_results, tibble(method = "quadratic discriminant analysis (QDA)", specificity = cm$byClass["Specificity"]))
 # ... The results wit QDA are very good. Similar to logistic regression
 
 ##################################################################################################
@@ -670,8 +670,8 @@ train_lda <- train(y ~ .,
                    train)
 y_hat <- predict(train_lda, test)
 cm <- confusionMatrix(data = y_hat, reference = test$y)
-uci_accuracy_results <- bind_rows(accuracy_results, tibble(method = "linear discriminant analysis (LDA)", accuracy = cm$overall["Accuracy"]))
-uci_specificity_results <- bind_rows(specificity_results, tibble(method = "linear discriminant analysis (LDA)", specificity = cm$byClass["Specificity"]))
+uci_accuracy_results <- bind_rows(uci_accuracy_results, tibble(method = "linear discriminant analysis (LDA)", accuracy = cm$overall["Accuracy"]))
+uci_specificity_results <- bind_rows(uci_specificity_results, tibble(method = "linear discriminant analysis (LDA)", specificity = cm$byClass["Specificity"]))
 # ... Not bad, but the specificity has dropped a little - not perfect for medical diagnostic
 
 ##################################################################################################
@@ -685,10 +685,13 @@ train_rpart <- train(y ~ .,
 
 y_hat <- predict(train_rpart, test)
 cm <- confusionMatrix(data = y_hat, reference = test$y)
-uci_accuracy_results <- bind_rows(accuracy_results, tibble(method = "decision tree (CART)", accuracy = cm$overall["Accuracy"]))
-uci_specificity_results <- bind_rows(specificity_results, tibble(method = "decision tree (CART)", specificity = cm$byClass["Specificity"]))
+uci_accuracy_results <- bind_rows(uci_accuracy_results, tibble(method = "decision tree (CART)", accuracy = cm$overall["Accuracy"]))
+uci_specificity_results <- bind_rows(uci_specificity_results, tibble(method = "decision tree (CART)", specificity = cm$byClass["Specificity"]))
 
 plot(train_rpart)
+
+plot(train_rpart$finalModel, target = 0.1)
+text(train_rpart$finalModel, cex = 0.75)
 
 ##################################################################################################
 # Model 6B: Random Forest
@@ -696,8 +699,8 @@ plot(train_rpart)
 # Random Forest
 train_rf <- randomForest(y ~ ., data=train)
 cm <- confusionMatrix(predict(train_rf, test), test$y)
-uci_accuracy_results <- bind_rows(accuracy_results, tibble(method = "random forest", accuracy = cm$overall["Accuracy"]))
-uci_specificity_results <- bind_rows(specificity_results, tibble(method = "random forest", specificity = cm$byClass["Specificity"]))
+uci_accuracy_results <- bind_rows(uci_accuracy_results, tibble(method = "random forest", accuracy = cm$overall["Accuracy"]))
+uci_specificity_results <- bind_rows(uci_specificity_results, tibble(method = "random forest", specificity = cm$byClass["Specificity"]))
 # ... it's good, but still not as good as Logical Regression
 
 plot(train_rf)
