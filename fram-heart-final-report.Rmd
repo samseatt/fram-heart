@@ -153,12 +153,14 @@ plotOutcome <- function(df, dfcol, bw) {
 }
 
 ```
+
 Used head() and str() to check the data columns and their format. This information is useful in determining what data transformation will be required (during the data cleaning step) for proper ML modeling.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
 head(heart)
 str(heart)
 ```
+
 See the summary of the data frame:
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
@@ -170,6 +172,7 @@ This gives us the ranges and means of each input parameter (and the output). The
 
 ### Data cleaning
 First, keeping with transformation, I rename the output column to y. I also change this output to be a factor as classification is about predicting between competing outcomes and not predicting numeric values.
+
 ```{r echo=FALSE, include=FALSE, message=FALSE, warning=FALSE }
 names(heart)[names(heart) == 'TenYearCHD'] <- 'y'
 heart$y <- as.factor(heart$y)
@@ -226,6 +229,7 @@ Now we have relatively few rows with NAs and can afford to throw them away. So, 
 heart <- na.omit(heart)
 nrow(heart)
 ```
+
 Now I have 4090 rows to train and validate. This seems just about right to get a good representative training in reasonable time, allowing to run the models relatively quickly and comparing multiple models.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
@@ -249,6 +253,7 @@ heart %>% group_by(male, y) %>% summarise(n = n())
 Check correlations between inputs (independent variables that ideally should not be correlated in order to get the maximum benifit of each) and between inputs and output (the dependant variable, where correlation should exist). 
 
 Correlation between age and systolic blood pressure:
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
 ggplot(data = heart) + geom_point(aes(age, sysBP))
 cor(heart$age, heart$sysBP)
@@ -257,6 +262,7 @@ cor(heart$age, heart$sysBP)
 As expected, there is some correlation showing blood pressure deteriorates with age. But not entirely, as the correlation is not very strong. So, we can consider BP to be an independent variable along with age for the purpose of heart risk prediction.
 
 Correlation between age and cigarettes per day:
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
 ggplot(data = heart) + geom_point(aes(age, cigsPerDay))
 cor(heart$age, heart$cigsPerDay)
@@ -265,6 +271,7 @@ cor(heart$age, heart$cigsPerDay)
 There is almost no correlation: all ages smoke almost equally. So age is definitely not a confounder for smoking. 
 
 Correlation between age and total cholesterol:
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
 ggplot(data = heart) + geom_point(aes(age, totChol))
 cor(heart$age, heart$totChol)
@@ -273,6 +280,7 @@ cor(heart$age, heart$totChol)
 Somehow, we don't have a strong positive correlation between age and total cholesterol. In other words, total cholesterol does not increase drastically with age - this could be because younger people have higher HDL (good cholesterol i.e. we should have been seeking cholesterol ratio instead), or older patients are more likely to be on cholesterol-lowering medicines, or younger people in the study are those who had a reason to get their heart metrics checked, or some other medical reason like the dimensions of the cholesterol molecules. In any case, whether or not total cholesterol (rather than cholesterol ratio) is a good predictor, we can safely include it as a variable independent of age.
 
 Correlation between systolic BP and diastolic BP
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
 ggplot(data = heart) + geom_point(aes(sysBP, diaBP))
 cor(heart$sysBP, heart$diaBP)
@@ -417,7 +425,6 @@ Also, prevalent stroke does not seem to be present much (only 22 times, and only
 heart %>% group_by(prevalentStroke, y) %>% summarise(n = n())
 ```
 
-
 ### Modeling approach
 I use the caret package to Split the data into training and test sets.
 
@@ -516,6 +523,7 @@ specificity_results <- bind_rows(specificity_results, tibble(method = "decision 
 
 plot(train_rpart)
 ```
+
 Model 6: Random Forest
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
@@ -536,10 +544,13 @@ plot(train_rf)
 The following table summarizes the results obtained for Accuracy and Specificity, respectively for each trained model.
 
 Accuracy:
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
 accuracy_results
 ```
+
 Specificity:
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
 specificity_results
 ```
@@ -598,6 +609,7 @@ summary(glm_fit_reduced)
 There is only a slight but not appreciable decrease. We can train with either option, but it's good to know where is the most buck for the benefit, in case we have to train on large amount of data or if we are investing a significant amount of money on collecting the inputs that are not useful.
 
 ### Comparing Framingham Data Set with UCI Data Set
+
 ```{r echo=FALSE, include=FALSE, message=FALSE, warning=FALSE }
 
 # Load UCI Heart database. Again I downloaded and save the dataset CSV file in my GitHub repository
@@ -692,10 +704,13 @@ uci_specificity_results <- bind_rows(uci_specificity_results, tibble(method = "r
 The following table summarizes the results obtained for Accuracy and Specificity, respectively for each trained model for the UCI dataset.
 
 UCI/Cleveland Accuracy:
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
 uci_accuracy_results
 ```
+
 UCI/Cleveland Specificity:
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
 uci_specificity_results
 ```
@@ -710,7 +725,7 @@ I pick decision tree for this problem as it also provides a much better visual a
 plot(train_rpart)
 
 plot(train_rpart$finalModel, margin = 0.1)
-text(train_rpart$finalModel, cex = 1)
+text(train_rpart$finalModel, cex = 0.8)
 ```
 
 # Conclusion

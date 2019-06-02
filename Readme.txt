@@ -25,5 +25,5 @@ Generated HTML report:
 
 Instructions:
   Open the fram-heart.Rproj project in RStudio.
-  Knit fram-heart-final-report.Rmd to generate HTML or PDF project report.
+  Knit fram-heart-final-report.Rmd to generate HTML or PDF project report. Ignore Ghostscript errors when knitting a PDF report.
   Run code/model.R to execute the models outside of the RMD file.
