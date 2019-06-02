@@ -3,8 +3,8 @@ title: "Heart Disease Prediction Modeling - Final Report"
 author: "Sam Seatt"
 date: "5/15/2019"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -171,7 +171,7 @@ This gives us the ranges and means of each input parameter (and the output). The
 
 
 ### Data cleaning
-First, keeping with transformation, I rename the output column to y. I also change this output to be a factor as classification is about predicting between competing outcomes and not predicting numeric values.
+First, keeping with tradition, I rename the output column to y. I also change this output to be a factor as classification is about predicting between competing outcomes and not predicting numeric values.
 
 ```{r echo=FALSE, include=FALSE, message=FALSE, warning=FALSE }
 names(heart)[names(heart) == 'TenYearCHD'] <- 'y'
@@ -733,7 +733,7 @@ This became a bigger undertaking than what I started out with (and what was requ
 
 What I found through data exploration and modelling, is that the Framingham dataset predicts the risk, while UCI predicts the actual disease. This is one reason UCI is more accurate even with small data to train with. This is an important consideration in problem formulation: there are problems that predict what happened or is happening (this has the uncertainty of prediction); and there are problems that predict something that may happen (i.e. with double uncertainty: that of prediction and that of the chance of it happening in real life).
 
-For training Framingham Study dataset, Linear Regression was selected and was further tuned to favor high specificity with significant but limited loss (by less than 50%) loss of precision. There is a good amount of data to train the model quite well.
+For training Framingham Study dataset, Logistic Regression was selected and was further tuned to favor high specificity with significant but limited loss (by less than 50%) loss of precision. There is a good amount of data to train the model quite well.
 
 For training UCI Cleveland Study dataset Decision Tree was selected as the preferred and better-performing model. This dataset, in contrast to Framingham, shows much improved results even with a very small training set (for the reason described above).
 
@@ -750,6 +750,7 @@ Improved data collection campaigns, especially incorporating genomic data (both 
 The models provided useful but less-than-perfect predictions. There are still several false negatives, emphasizing that the data can only pinpoint general improvement (in saving lives and cutting the cost of many unnecessary treatments). At the population level, this can improve guidelines and help triage more effectively; on individual level, this is not a sure-shot predictor of disease (at least not yet, until we embark on more ML-targeted data collection campaigns, and develop improved modeling with more health science, biochemical, genetic, and biometric insights, the disease accurately). The more data, and the more relevant data, the more such models can pinpoint outcomes better.
 
 # References
+* Introduction to Data Science - Dr. Rafael A. Irizarry: https://rafalab.github.io/dsbook/
 * Centers for Disease Control (CDC) - Heart Disease Facts: https://www.cdc.gov/heartdisease/facts.htm
 * Framingham Heart study dataset: https://www.kaggle.com/amanajmera1/framingham-heart-study-dataset
 * Heart Disease UCI: https://www.kaggle.com/ronitf/heart-disease-uci
