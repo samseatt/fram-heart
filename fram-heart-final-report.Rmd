@@ -2,7 +2,9 @@
 title: "Heart Disease Prediction Modeling - Final Report"
 author: "Sam Seatt"
 date: "5/15/2019"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -707,7 +709,7 @@ I pick decision tree for this problem as it also provides a much better visual a
 ```{r echo=FALSE, message=FALSE, warning=FALSE }
 plot(train_rpart)
 
-plot(train_rpart$finalModel, target = 0.1)
+plot(train_rpart$finalModel, margin = 0.1)
 text(train_rpart$finalModel, cex = 1)
 ```
 
@@ -720,7 +722,7 @@ For training Framingham Study dataset, Linear Regression was selected and was fu
 
 For training UCI Cleveland Study dataset Decision Tree was selected as the preferred and better-performing model. This dataset, in contrast to Framingham, shows much improved results even with a very small training set (for the reason described above).
 
-However, one can notice that the UCI model somehow followed the common human bias around gender and age when it comes to heart treatment: the tree graph for decision tree model (in the results section) shows that women aged 56 or less will never be treated for heart disease if the treatment decision is solely based on the decision tree trained here. Of course, more data (UCI dataset is very small so there probably was no woman 55 or younger in the dataset with the disease) should improve such shortcomings.
+However, one can notice that the UCI model somehow followed the common human bias around gender and age when it comes to heart treatment: the tree graph for decision tree model (in the results section) shows that women aged 56 or less will never be treated for heart disease if their cholesterol is low dispite having a poor HDL/LDL ratio, if the treatment decision is solely based on the decision tree trained here. Of course, more data (UCI dataset is very small) should improve such shortcomings.
 
 On an interesting side note: our brains probably also make small-data-driven, simplistic models (as we are not suited for large number crunching at high speeds, for obvious reasons) and that may be the implicit cause of many of our human biases (like the UCI dataset possesses to a smaller degree). In machine learning it is important to not further feed our human biases in the model, either during training or during data gathering; and this is the reason why I removed education column from the dataset before training when I didn't see any significant correlation with the output during data exploration.
 
@@ -733,4 +735,8 @@ Improved data collection campaigns, especially incorporating genomic data (both 
 The models provided useful but less-than-perfect predictions. There are still several false negatives, emphasizing that the data can only pinpoint general improvement (in saving lives and cutting the cost of many unnecessary treatments). At the population level, this can improve guidelines and help triage more effectively; on individual level, this is not a sure-shot predictor of disease (at least not yet, until we embark on more ML-targeted data collection campaigns, and develop improved modeling with more health science, biochemical, genetic, and biometric insights, the disease accurately). The more data, and the more relevant data, the more such models can pinpoint outcomes better.
 
 # References
-Centers for Disease Control (CDC) - Heart Disease Facts: https://www.cdc.gov/heartdisease/facts.htm
+* Centers for Disease Control (CDC) - Heart Disease Facts: https://www.cdc.gov/heartdisease/facts.htm
+* Framingham Heart study dataset: https://www.kaggle.com/amanajmera1/framingham-heart-study-dataset
+* Heart Disease UCI: https://www.kaggle.com/ronitf/heart-disease-uci
+* GitHub repository for this project: https://github.com/samseatt/fram-heart
+

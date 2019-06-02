@@ -702,7 +702,7 @@ uci_specificity_results <- bind_rows(uci_specificity_results, tibble(method = "d
 
 plot(train_rpart)
 
-plot(train_rpart$finalModel, target = 0.1)
+plot(train_rpart$finalModel, margin = 0.1)
 text(train_rpart$finalModel, cex = 1)
 
 ##################################################################################################
