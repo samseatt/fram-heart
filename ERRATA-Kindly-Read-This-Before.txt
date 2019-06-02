@@ -1,5 +1,7 @@
 (1) In the PDF report "Conclusion"" section there is a typo:
   It says Linear Regression. It is meant to say *Logistic* Regression. Logistic Regression was the final selection for training the Framingham Heart Study dataset.
+  
+(2) The report mentions logical regression at another place. Again, it is meant to say "logistic" regression
 
-(2) I forget to add this to the "References"" section:
+(3) I forget to add this to the "References"" section:
   Introduction to Data Science - Dr. Rafael A. Irizarry: https://rafalab.github.io/dsbook/

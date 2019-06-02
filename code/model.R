@@ -477,8 +477,8 @@ glm_fit <- train %>%
 p_hat_logit <- predict(glm_fit, newdata = test, type = "response")
 y_hat_logit <- ifelse(p_hat_logit > 0.5, 1, 0) %>% factor
 cm <- confusionMatrix(y_hat_logit, test$y)
-accuracy_results <- tibble(method = "logical regression - all params", accuracy = cm$overall["Accuracy"])
-specificity_results <- tibble(method = "logical regression - all params", specificity = cm$byClass["Specificity"])
+accuracy_results <- tibble(method = "logistic regression - all params", accuracy = cm$overall["Accuracy"])
+specificity_results <- tibble(method = "logistic regression - all params", specificity = cm$byClass["Specificity"])
 
 plot(p_hat_logit)
 
@@ -557,7 +557,7 @@ plot(train_rf)
 # ---------------------
 #
 # The best performing are those that have hight accuracy and specificity. These include
-#   Logical regression
+#   Logistic regression
 #   QDA
 #   LDA
 #   Random forest
@@ -644,8 +644,8 @@ glm_fit <- train %>%
 p_hat_logit <- predict(glm_fit, newdata = test, type = "response")
 y_hat_logit <- ifelse(p_hat_logit > 0.5, 1, 0) %>% factor
 cm <- confusionMatrix(y_hat_logit, test$y)
-uci_accuracy_results <- tibble(method = "logical regression - all params", accuracy = cm$overall["Accuracy"])
-uci_specificity_results <- tibble(method = "logical regression - all params", specificity = cm$byClass["Specificity"])
+uci_accuracy_results <- tibble(method = "logistic regression - all params", accuracy = cm$overall["Accuracy"])
+uci_specificity_results <- tibble(method = "logistic regression - all params", specificity = cm$byClass["Specificity"])
 
 plot(p_hat_logit)
 
@@ -713,7 +713,7 @@ train_rf <- randomForest(y ~ ., data=train)
 cm <- confusionMatrix(predict(train_rf, test), test$y)
 uci_accuracy_results <- bind_rows(uci_accuracy_results, tibble(method = "random forest", accuracy = cm$overall["Accuracy"]))
 uci_specificity_results <- bind_rows(uci_specificity_results, tibble(method = "random forest", specificity = cm$byClass["Specificity"]))
-# ... it's good, but still not as good as Logical Regression
+# ... it's good, but still not as good as logistic Regression
 
 plot(train_rf)
 
